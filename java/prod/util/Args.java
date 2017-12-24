@@ -397,8 +397,8 @@ public class Args {
   }
 
   /**
-   * Compares Matchers to a typical String[] array from public static void main(). Results will be
-   * stored in the original Matcher objects (results can be cleared using clear(), for whatever reasons).
+   * Compares Matchers to a typical <code>String[]</code> array from <code>public static void main()</code>. Results will be
+   * stored in the original Matcher objects (results can be cleared using <code>clear()</code>, for whatever reasons).
    * <p>
    * On a successful match:
    * <ul>
