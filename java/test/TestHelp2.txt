@@ -28,4 +28,4 @@ Synopsis: sample_program <--name=<name>> [-i] [-m] [--count=<number>] [filename(
 
   --help
   -h
-    Prints this help text fart pants
+    Prints this help text

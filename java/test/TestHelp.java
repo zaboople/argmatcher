@@ -1,3 +1,4 @@
+
 package test;
 import java.io.*;
 import java.nio.*;
@@ -94,7 +95,7 @@ public class TestHelp {
     // Generate help & read in expected input:
     args.help(hasText);
     {
-      InputStream instr=TestArgs.class.getResourceAsStream(compareToFile);
+      InputStream instr=TestHelp.class.getResourceAsStream(compareToFile);
       if (instr==null) throw new IllegalArgumentException("Not found: "+compareToFile);
       char[] chars=new char[1024];
       int readLen;
