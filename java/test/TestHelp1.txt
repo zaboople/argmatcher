@@ -1,0 +1,25 @@
+Synopsis: [--allow[=value]] [--req=<value>] [--multi=<value>] <--multireq=<value>> <filename>
+
+  Line 1 of general help
+  Line 2 of general help
+
+  Options:
+  --allow[=value]
+  -a [value]
+    Allows line 1
+    Allows line 2
+
+  --req=<value>
+  -r <value>
+
+  --multi=<value> (repeatable)
+  -m <value(s)>
+    Optional but allows more than one
+
+  --multireq=<value> (repeatable)
+  -mrq <value(s)>
+    * Required
+
+  <filename>
+    * Required
+    A file to read data from.

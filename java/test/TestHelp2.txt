@@ -1,0 +1,31 @@
+Synopsis: sample_program <--name=<name>> [-i] [-m] [--count=<number>] [filename(s)] [--help]
+
+  This is a sample program. It is sort of fun to play with, yet
+  it does nothing useful at all.
+
+  Options:
+  --name=<name> (repeatable)
+  -names <name(s)>
+  -n <name(s)>
+    * Required
+    All the names of people we don't like very much.
+
+  -i
+  i
+    Ignore case as applies to file data
+
+  -m
+  m
+    Treat all lines of file text as a single string
+
+  --count=<number>
+  -count <number>
+    The number of times we want to yell at each person we don't like
+
+  [filename(s)]
+    Some files to mangle into tiny bits, or none at all
+    because it doesn't make any difference anyhow.
+
+  --help
+  -h
+    Prints this help text fart pants
