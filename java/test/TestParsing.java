@@ -8,7 +8,7 @@ import java.util.function.*;
 import util.Args;
 import util.Args.Matcher;
 
-
+//FIXME unsafe operations
 public class TestParsing {
 
   public static void main(String[] args) throws Exception {
@@ -55,17 +55,17 @@ public class TestParsing {
 
     {
       prelude("Wildcard:");
-      Matcher abc1=tester.reset().add().setRequiredAndMultiParam().setParamSample("thing");
+      Matcher<?> abc1=tester.reset().add().setRequiredAndMultiParam().setParamSample("thing");
       tester
         .match("a", "b", "c").expectWild(abc1, "a", "b", "c")
         .matchExpectFail("Missing argument: <thing(s)>");
 
-      Matcher abc2=tester.reset().add().setMultiParam();
+      Matcher<?> abc2=tester.reset().add().setMultiParam();
       tester
         .match().expectNone(abc2)
         .match("a", "b", "c").expectWild(abc2, "a", "b", "c");
 
-      Matcher abc3=tester.reset().add();
+      Matcher<?> abc3=tester.reset().add();
       tester
         .match().expectNone(abc3)
         .matchExpectFail(
@@ -77,7 +77,7 @@ public class TestParsing {
     {
       prelude("Multiple single-param wildcards:");
       tester.reset();
-      Matcher a1=tester.add(), a2=tester.add(), a3=tester.add("-a3");
+      Matcher<?> a1=tester.add(), a2=tester.add(), a3=tester.add("-a3");
       tester
         .match().expectNone(a1, a2)
         .match("hello", "world", "-a3")
@@ -98,7 +98,7 @@ public class TestParsing {
     {
       prelude("Multiple multi-param wildcards:");
       tester.reset();
-      Matcher
+      Matcher<?>
         a1=tester.add().setMultiParam(),
         a2=tester.add().setMultiParam(),
         a3=tester.add("-a3");
@@ -122,7 +122,7 @@ public class TestParsing {
     {
       prelude("Allows vs. Required:");
       tester.reset();
-      Matcher
+      Matcher<String>
         allow=tester.add("--allow", "-a").setAllowsParam(),
         req=tester.add("--req", "-r").setRequired();
       tester
@@ -161,7 +161,7 @@ public class TestParsing {
     {
       prelude("Another onlyIf() test:");
       tester.reset();
-      Matcher
+      Matcher<?>
         z1=tester.add("--z1", "-z1"),
         z2=tester.add("--z2", "-z2").setRequired().onlyIf(z1),
         z3=tester.add("--z3", "-z3").setAllowsParam().onlyIf(z1)
@@ -226,9 +226,11 @@ public class TestParsing {
     prelude("Making sure similar names don't cross each other up:");
     {
       tester.reset();
-      Matcher a=tester.add("-a");
-      Matcher ab=tester.add("-ab");
-      Matcher abc=tester.add("-abc");
+      Matcher<?>
+        a=tester.add("-a"),
+        ab=tester.add("-ab"),
+        abc=tester.add("-abc")
+        ;
       tester
         .expectNone(a, ab, abc)
         .match("-abc")
@@ -237,9 +239,11 @@ public class TestParsing {
     }
     {
       tester.reset();
-      Matcher a2=tester.add("-a").setMultiParam();
-      Matcher ab2=tester.add("-ab").setAllowsParam();
-      Matcher abc2=tester.add("-abc").setAllowsParam();
+      Matcher<?>
+        a2=tester.add("-a").setMultiParam(),
+        ab2=tester.add("-ab").setAllowsParam(),
+        abc2=tester.add("-abc").setAllowsParam()
+        ;
       tester
         .match("-abc=3", "-ab=2", "-a=1", "-a=11")
         .expectMulti(a2, "-a", "1", "11")
@@ -251,7 +255,7 @@ public class TestParsing {
     prelude("Mashing arguments together:");
     {
       tester.reset();
-      Matcher
+      Matcher<?>
         a=tester.add("-a"),
         b=tester.add("-b"),
         c=tester.add("-c"),
@@ -274,7 +278,7 @@ public class TestParsing {
     prelude("Mashing arguments together without dashes:");
     {
       tester.reset();
-      Matcher
+      Matcher<?>
         a=tester.add("-a", "a"),
         b=tester.add("-u", "u"),
         c=tester.add("-x", "x"),
@@ -297,7 +301,7 @@ public class TestParsing {
     prelude("Verify: \"-a xxx -a=yyy -a zzz\" gives the same result as \"-a xxx yyy zzz\"");
     {
       tester.reset();
-      Matcher
+      Matcher<?>
         a=tester.add("-a").setMultiParam(),
         b=tester.add("-b").setAllowsParam(),
         c=tester.add("-c")
@@ -324,7 +328,7 @@ public class TestParsing {
     {
       tester.reset()
         .args.setAllowParamDelimiterSkip();
-      Matcher
+      Matcher<?>
         a=tester.add("-a").setMultiParam(),
         b=tester.add("-b").setAllowsParam(),
         c=tester.add("-c").setAllowsParam()
@@ -340,7 +344,7 @@ public class TestParsing {
     {
       tester.reset()
         .args.setAllowParamDelimiterSkip();
-      Matcher
+      Matcher<?>
         a=tester.add("-a").setRequiresParam(),
         b=tester.add("-b").setAllowsParam(),
         c=tester.add("-c").setAllowsParam()
@@ -356,7 +360,7 @@ public class TestParsing {
     {
       tester.reset()
         .args.setAllowParamDelimiterSkip();
-      Matcher
+      Matcher<?>
         a=tester.add("-a").setRequiresParam(),
         b=tester.add("-b").setAllowsParam(),
         c=tester.add("-c").setAllowsParam()
@@ -369,6 +373,61 @@ public class TestParsing {
         .expectFail("not good")
       ;
       if (!b.failed()) throw new RuntimeException();
+    }
+
+    prelude("The tar xvf test");
+    {
+      tester.reset()
+        .args.setAllowParamDelimiterSkip();
+      Matcher<?>
+        x=tester.add("-x", "x"),
+        v=tester.add("-v", "v"),
+        f=tester.add("-f", "f").setRequiresParam()
+        ;
+      tester.match("-xvf", "-")
+        .expect(x, "-x")
+        .expect(v, "-v")
+        .expect(f, "-f", "-")
+      ;
+      tester.match("xvf", "-")
+        .expect(x, "x")
+        .expect(v, "v")
+        .expect(f, "f", "-")
+      ;
+      tester.match("xvf-")
+        .expect(x, "x")
+        .expect(v, "v")
+        .expect(f, "f", "-")
+      ;
+    }
+
+    prelude("The grep <expr> <files> test");
+    {
+      tester.reset();
+      Matcher<?>
+        i=tester.add("-i", "i"),
+        m=tester.add("-m", "m"),
+        expr=tester.add(),
+        files=tester.add().setMultiParam()
+      ;
+      tester.match("expr", "-i", "file1", "file2", "file3", "-m")
+        .expectWild(expr, "expr")
+        .expectWild(files, asList("file1", "file2", "file3"))
+        .expect(i, "-i")
+        .expect(m, "-m")
+        ;
+      tester.match("i", "expr", "file1", "file2", "file3")
+        .expectWild(expr, "expr")
+        .expectWild(files, asList("file1", "file2", "file3"))
+        .expect(i, "i")
+        .expectNone(m)
+        ;
+      tester.match("im", "expr", "file1", "file2", "file3")
+        .expectWild(expr, "expr")
+        .expectWild(files, asList("file1", "file2", "file3"))
+        .expect(i, "i")
+        .expect(m, "m")
+        ;
     }
 
   }
@@ -396,10 +455,10 @@ public class TestParsing {
       this.args=new Args();
       return this;
     }
-    public Matcher<?> add() {
+    public Matcher<String> add() {
       return args.add();
     }
-    public Matcher<?> add(String... names) {
+    public Matcher<String> add(String... names) {
       return args.add(names);
     }
     public Tester addError(Matcher<?> m, String s) {
@@ -456,16 +515,16 @@ public class TestParsing {
       System.out.println("Success: "+matcher+" -> "+got);
       return this;
     }
-    public Tester expectMulti(Matcher matcher, String name, String... args) {
+    public Tester expectMulti(Matcher<?> matcher, String name, String... args) {
       return expect(matcher, name, null, args);
     }
-    public Tester expectWild(Matcher matcher, String param) {
+    public Tester expectWild(Matcher<?> matcher, String param) {
       return expect(matcher, null, param);
     }
-    public Tester expectWild(Matcher matcher, String... params) {
+    public Tester expectWild(Matcher<?> matcher, String... params) {
       return expect(matcher, params.length>0, null, null, params);
     }
-    public Tester expectWild(Matcher matcher, List<String> params) {
+    public Tester expectWild(Matcher<?> matcher, List<String> params) {
       return expect(matcher, params.size()>0, null, null, params);
     }
     public Tester expectNone(Matcher<?>... ms) {
@@ -496,12 +555,13 @@ public class TestParsing {
       List<String> errors=null;
       errors=neq(errors, "Found", am.found(), found);
       errors=neq(errors, "Name", am.getName(), name);
-      errors=neq(errors, "Param", am.getParam(), param);
       List<?> gotParams=am.getParams();
       if (gotParams!=null || (params!=null && params.size()>0))
         errors=neq(errors, "Params", gotParams, params);
+      else
+        errors=neq(errors, "Param", am.getParam(), param);
       if (errors!=null)
-        throw new IllegalStateException("Mismatches for "+am+" -> "+errors.stream().collect(Collectors.joining(", ")));
+        throw new IllegalStateException("Mismatches for\n  Matcher: "+am+" -> "+errors.stream().collect(Collectors.joining(", ")));
       System.out.println("Success: "+am);
       return this;
     }
@@ -509,7 +569,10 @@ public class TestParsing {
     private List<String> neq(List<String> errors, String field, Object a, Object b) {
       if (neq(a,b)) {
         if (errors==null) errors=new ArrayList<>();
-        errors.add(field+": Got "+a+" != Expected "+b);
+        errors.add("\n  On "+field+":\n"+
+          "    Expected: -> "+b+"\n"+
+          "    Got:      -> "+a
+        );
       }
       return errors;
     }
@@ -527,6 +590,7 @@ public class TestParsing {
   }
 
   @SafeVarargs
+  @SuppressWarnings( "varargs" )
   private static <T> List<T> asList(T... args) {
     return Arrays.asList(args);
   }

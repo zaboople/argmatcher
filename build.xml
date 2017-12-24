@@ -64,9 +64,13 @@
   <target name="compile" description="Compile main source tree java files">
     <mkdir dir="${build.dir}"/>
     <javac destdir="${build.dir}" debug="true"
-           deprecation="false" failonerror="true">
+           deprecation="true" failonerror="true">
       <src path="${java.dir}"/>
       <classpath refid="classpath"/>
+      <compilerarg value="-Xlint:all"/>
+      <compilerarg value="-Xlint:-processing"/>
+      <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Werror"/>
     </javac>
     <copy todir="${build.dir}">
       <fileset dir="${java.dir}">

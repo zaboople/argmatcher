@@ -91,7 +91,7 @@ public class Args {
   private List<Matcher<?>> matchers=new ArrayList<>();
   private boolean allowParamDelimiterSkip=false;
   private Map<Character,Matcher<?>> charToMatcher=new HashMap<>();
-  private Set<String> noDuplicates=new HashSet<>();
+  private Set<String> allNames=new HashSet<>();
   private String paramNoDashes=null;
   private List<String> errors;
 
@@ -181,9 +181,9 @@ public class Args {
       for (String name: matcher.names) {
 
         // 1. No duplicates:
-        if (noDuplicates.contains(name))
+        if (allNames.contains(name))
           throw new IllegalArgumentException("Duplicate argument name: \""+name+"\"");
-        noDuplicates.add(name);
+        allNames.add(name);
 
         // 2. Populate charToMatcher for shorcutting -a -b -c as -abc (and abc)
         int nameLen=name.length();
@@ -253,7 +253,7 @@ public class Args {
    *
    * @param matcher Null is permitted. Only sets the failed flag on the given matcher.
    */
-  public Args addError(Matcher matcher, String err) {
+  public Args addError(Matcher<?> matcher, String err) {
     addUserError(matcher, err);
     return this;
   }
@@ -264,7 +264,7 @@ public class Args {
    * where a user can choose between, say, "-n" or "--name". Also gives
    * a sample value(s) for wildcards.
    */
-  public String identify(Matcher ma) {
+  public String identify(Matcher<?> ma) {
     return ma.wildcard
       ?helpParam(new StringBuilder(), ma, null).toString()
       :(ma.name!=null ?ma.name :ma.names[0]);
@@ -338,12 +338,12 @@ public class Args {
       for (int i=0; i<mat.names.length; i++) {
         app.append(indent);
         helpParam(app, mat, mat.names[i]);
-        if (mat.multiParam && !mat.wildcard && mat.names[i].startsWith("--")) //FIXME get rid of preferArgEqualsParam
+        if (mat.multiParam && !mat.wildcard && mat.names[i].startsWith("--"))
           app.append(" (repeatable)");
       }
     else {
       app.append(indent);
-      helpParam(app, mat, null); //FIXME where is -help in my sample output????
+      helpParam(app, mat, null);
     }
     if (mat.required)
       app.append(indent).append("  * Required");
@@ -426,11 +426,11 @@ public class Args {
    *   <li>So if no Matchers have dashed names, "-" and "--" are permitted as parameter prefixes.
    * </ul>
    * <p>
-   * Of course the simplest way to avoid confusion is to use double-dashed argument names, e.g.
+   * Of course the simple way to avoid confusion is to use double-dashed argument names, e.g.
    * <pre>
    *    Args.add("--index").setAllowsParam()
    * </pre>
-   * allows the user to type "--index=-1" without any ambiguity.
+   * - which allows the user to type "--index=-1" without any ambiguity.
    */
   public void match(String[] args) {
 
@@ -479,7 +479,7 @@ public class Args {
     * But it could also be "-abc" as a way of saying, "-a -b -c", in which case we have to check
     * other Matchers as well using the charToMatcher map.
     */
-  private MatchCapture match(Matcher matcher, String arg) {
+  private MatchCapture match(Matcher<?> matcher, String arg) {
     if (matcher.wildcard) {
       if (notArg(arg) && !matcher.found) {
         matcher.found=true;
@@ -513,11 +513,11 @@ public class Args {
         //   And the "-" in "-abc" is optional
         int lastIndex=maybeLen-1;
         int argLen=arg.length();
-        Matcher[] all=new Matcher[argLen];
-        Matcher lastMatcher=all[lastIndex]=matcher;
+        Matcher<?>[] all=new Matcher<?>[argLen];
+        Matcher<?> lastMatcher=all[lastIndex]=matcher;
         boolean success=true;
         for (int i=lastIndex+1; success && i<argLen; i++) {
-          Matcher other=charToMatcher.get(arg.charAt(i));
+          Matcher<?> other=charToMatcher.get(arg.charAt(i));
           if (success=(other!=null && !lastMatcher.requiresParam))
             lastMatcher=all[lastIndex=i]=other;
         }
@@ -528,7 +528,7 @@ public class Args {
           return new MatchCapture(MATCH_NAME, lastMatcher);
         }
         else
-        if (allowParamDelimiterSkip && lastMatcher.allowsParam) {
+        if (allowParamDelimiterSkip && lastMatcher.allowsParam && !arg.substring(lastIndex+1).startsWith(" ")) {
           // Combined args + a parameter for the last one:
           setFound(all, arg, lastIndex, maybeLen>1);
           addParamValue(lastMatcher, arg.substring(lastIndex+1));
@@ -539,7 +539,7 @@ public class Args {
     return null; // No match
   }
 
-  private void setFound(Matcher[] all, String arg, int last, boolean dashed) {
+  private void setFound(Matcher<?>[] all, String arg, int last, boolean dashed) {
     for (int i=0; i<=last; i++)
       if (all[i]!=null) {
         all[i].found=true;
@@ -552,10 +552,11 @@ public class Args {
   }
 
   private boolean notArg(String value) {
-    return paramNoDashes==null || !value.startsWith(paramNoDashes);
+    boolean noDash=paramNoDashes==null || !value.startsWith(paramNoDashes);
+    return noDash || !allNames.contains(value);
   }
 
-  private int addParamValues(Matcher matcher, int i, String[] args) {
+  private int addParamValues(Matcher<?> matcher, int i, String[] args) {
     addParamValue(matcher, args[i]);
     while (matcher.multiParam && notArgNext(i, args))
       addParamValue(matcher, args[++i]);
@@ -582,11 +583,11 @@ public class Args {
       }
   }
 
-  private void addMissingParamError(Matcher matcher) {
+  private void addMissingParamError(Matcher<?> matcher) {
     addUserError(matcher, "Argument "+identify(matcher)+" requires parameter");
   }
 
-  private void addUserError(Matcher matcher, String error) {
+  private void addUserError(Matcher<?> matcher, String error) {
     if (matcher!=null) matcher.failed=true;
     if (errors==null) errors=new ArrayList<>();
     errors.add(error);
@@ -646,7 +647,7 @@ public class Args {
     // Configuration:
     private final String[] names;
     private boolean wildcard, required, allowsParam, requiresParam, multiParam, isIntParam;
-    private Matcher onlyIf=null;
+    private Matcher<?> onlyIf=null;
     private List<Matcher<?>> onlyIfMe=null;
     private Function<String, T> converter;
 
@@ -794,10 +795,6 @@ public class Args {
         +(params==null || params.size()==0 ?"" :" Params: "+params);
     }
 
-    private boolean preferArgEqualsParam() {
-      return !wildcard && names[0].startsWith("--");
-    }
-
     private void convert(String value) {
       T t=converter.apply(value);
       if (param==null)
@@ -835,30 +832,34 @@ public class Args {
      * @param defaultValue This will be returned if the argument was not found,
      *   or if it was found but the parameter was optional and not provided.
      *   Note that for the case of "--arg=" defaultValue will be returned.
-     *   Finally, for a multi-parameter argument with at least one parameter given,
-     *   this will always return the first one given. FIXME that's dumb return null.
+     *   Finally, if this Matcher is configured as a multi-parameter argument
+     *   an IllegalStateException will be thrown.
      */
     public T getParam(T defaultValue) {
-      if (!found || param==null) return defaultValue;
-      return getParam();
+      T p=getParam();
+      if (!found || p==null) return defaultValue;
+      return p;
     }
 
     /**
      * Same as getParam(T) but returns null when no parameter was provided by the user.
      */
     public T getParam() {
-      return param;
+      if (multiParam)
+        throw new IllegalStateException("Not a single-parameter argument");
+      return multiParam ?null :param;
     }
 
     /**
      * Obtains a list of values for multi-parameter arguments.
      * @param defaultValues A list of default values. Null is permitted.
      * @return The user-input values if any were provided; otherwise defaultValues.
-     *    Note that for the case of "--arg= " defaultValues will be returned. FIXME
+     *    Note that for the case of "--arg= " defaultValues will be returned.
      */
     public List<T> getParams(List<T> defaultValues) {
-      if (!found || params.isEmpty()) return defaultValues;
-      return params;
+      List<T> p=getParams();
+      if (!found || p.isEmpty()) return defaultValues;
+      return p;
     }
 
     /**

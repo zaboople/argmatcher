@@ -52,7 +52,7 @@ public class Sample {
       .setHelp("Some files to mangle into tiny bits, or none at all",
       "because it doesn't make any difference anyhow.");
 
-    Matcher matchHelp=parser.add("--help", "-h")
+    Matcher<?> matchHelp=parser.add("--help", "-h")
       .setHelp("Prints this help text");
 
     // 2. Note how we check matchHelp before checking for errors, because

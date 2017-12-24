@@ -77,7 +77,7 @@ public class TestHelp {
         .setHelp("Some files to mangle into tiny bits, or none at all",
         "because it doesn't make any difference anyhow.");
 
-      Matcher matchHelp=args.add("--help", "-h")
+      Matcher<?> matchHelp=args.add("--help", "-h")
         .setHelp("Prints this help text");
 
       compare(args, "/test/TestHelp2.txt");

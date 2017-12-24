@@ -1,21 +1,28 @@
-System requirements
-  Java 8 JRE/SDK
+# Argmatcher
 
-Parameter arguments
+Argmatcher is a concise, flexible and (relatively) straightforward command-line argument parser for Java programs.
 
-Parameters can be supplied like this:
-  --x foo
-or like this:
-  --x=foo
-Currently you cannot enforce one vs. the other, and the auto-generated docs don't mention the --x=foo syntax. FIXME
+It allows you to support even the most arcane & confusing of classic Unix/Linux syntax, like
 
-Multiple parameter arguments
+    ps -aux
+    ps aux
+    ps -a -u -x
+    grep expression file1 file2 file3
+    tar -xvf -
+    gawk -F~
 
-Do I really need a pre-assembled fancy-shmancy argument parser?
-In all honesty, probably not. Most command-line programs are simple affairs, and in other cases it's worth
-asking first whether you are making things more complicated than they need to be. I did this mainly for
-the sake of the challenge, but if it fulfills a legitimate need adequately for someone, all the better I guess.
+- as well as slightly more modern, stuffy variations like
 
-What about environment variables and -Dblah=blah and yaml and json and having twenty different ways
-to burpity blah blah blah...?
-That's someone else's problem.
+    command --very-long-thing=blah
+
+It also provides man-page-style help documentation & generic-typed parameter conversion stuff.
+
+Best of all, it uses no reflection, annotations, byte-code-rewriting aspect-oriented blah-blah and so forth.
+
+Even more best of all, the whole thing fits in a single file, so you can just download it, stuff it in your own repo,
+and rewrite it to work _your_ way because my way sucks and so forth:
+
+
+
+## System requirements
+Java 8 SDK/JRE

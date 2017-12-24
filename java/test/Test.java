@@ -13,6 +13,7 @@ public class Test {
   public static void main(String[] args) throws Exception {
     TestParsing.test();
     TestHelp.test();
+    System.out.println("\n*** SUCCESS ***");
   }
 
 }
