@@ -11,7 +11,7 @@ It allows you to support even the most arcane & confusing of classic Unix/Linux 
     tar -xvf -
     gawk -F~
 
- - as well as slightly more modern, stuffy variations like
+\- as well as slightly more modern, stuffy variations like
 
     command --very-long-thing=blah
 
