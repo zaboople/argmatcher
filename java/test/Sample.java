@@ -25,10 +25,10 @@ public class Sample {
       .setParamSample("name")
       .setHelp("All the names of people we don't like very much.");
 
-    Matcher<String> matchIgnoreCase=parser.add("-i", "i")
+    Matcher<?> matchIgnoreCase=parser.add("-i", "i")
       .setHelp("Ignore case as applies to file data");
 
-    Matcher<String> matchMultiline=parser.add("-m", "m")
+    Matcher<?> matchMultiline=parser.add("-m", "m")
       .setHelp("Treat all lines of file text as a single string");
 
     Matcher<Integer> matchCount=parser.add(
