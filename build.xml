@@ -85,6 +85,7 @@
       <classpath refid="classpath"/>
       <fileset dir="${java.dir}">
         <include name="**/*.java"/>
+        <exclude name="test/**"/>
       </fileset>
     </javadoc>
   </target>
