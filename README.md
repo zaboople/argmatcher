@@ -27,7 +27,7 @@ I'm too lazy to publish jar files to all the maven repos)
 # Documentation:
 [Here is a nice example implementation](./java/test/Sample.java)
 
-[Online javadocs](https://zaboople.github.io/argmatcher/javadoc/util/Args.html)
+[Online javadocs](https://zaboople.github.io/javadoc/argmatcher/)
 
 # System requirements:
 
