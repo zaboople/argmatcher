@@ -638,7 +638,7 @@ public class Args {
 
 
   /**
-   * Individual arguments &amp; their parameters are captured by ArgMatcher.
+   * Individual arguments &amp; their parameters are captured by Matcher.
    */
   public static class Matcher<T> {
     // Note: OOP-wise, Matcher has been dumbed down quite a bit from separating logic "the right way"
