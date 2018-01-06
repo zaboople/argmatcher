@@ -67,7 +67,7 @@ import java.util.function.Function;
 public class Args {
 
   /**
-   * ThrowIO & quietly() reduce the hassle of unlikely IOExceptions from Appendable.append().
+   * ThrowIO &amp; quietly() reduce the hassle of unlikely IOExceptions from Appendable.append().
    */
   @FunctionalInterface
   private static interface ThrowIO {
@@ -128,8 +128,8 @@ public class Args {
    *
    * @return The new Matcher, which can be further configured via its own methods.
    */
-  public Matcher<String> add(String... args) {
-    return add(new Matcher<String>(Function.identity(), args));
+  public Matcher<String> add(String... names) {
+    return add(new Matcher<String>(Function.identity(), names));
   }
 
   /**
@@ -156,8 +156,8 @@ public class Args {
    * preceding them. One would use two separate wildcard Matchers for such:
      <pre>
       Args args=new Args();
-      Matcher<String> regex=args.add();
-      Matcher<String> files=args.add().setMultiParam();
+      Matcher&lt;String&gt; regex=args.add();
+      Matcher&lt;String&gt; files=args.add().setMultiParam();
       ...</pre>
    * @return The new Matcher, which can be further configured via its own methods.
    */
@@ -215,7 +215,7 @@ public class Args {
     return setHelp(Arrays.asList(helpIntro));
   }
 
-  /** Same as setHelp(String...) but using List<String> instead.*/
+  /** Same as setHelp(String...) but using List&lt;String&gt; instead.*/
   public Args setHelp(List<String> helpIntro) {
     this.helpIntro=helpIntro;
     return this;
@@ -225,11 +225,11 @@ public class Args {
    * <p>
    * Sets the name of the program printed in the "Synopsis" section of help, e.g.
    * <br>
-   * "Synopsis: myprogram [-x <value>] [-y] [-z]".
+   * "Synopsis: myprogram [-x &lt;value&gt;] [-y] [-z]".
    * <p>
    * If no name is given, none will be printed, e.g.:
    * <br>
-   * "Synopsis: [-x <value>] [-y] [-z]".
+   * "Synopsis: [-x &lt;value&gt;] [-y] [-z]".
    */
   public Args setHelpProgramName(String helpProgramName) {
     this.helpProgramName=helpProgramName;
@@ -278,7 +278,7 @@ public class Args {
 
   /**
    * Prints a complete set of man-page-like help documentation based on configuration,
-   * including three sections, in order: synopsis, summary & options.
+   * including three sections, in order: synopsis, summary &amp; options.
    * <p>
    * For named arguments, only the first name provided to Args.add() will be printed in
    * the Synopsis; the more detailed Options section will list any extra names provided
@@ -474,8 +474,8 @@ public class Args {
   }
 
   /**
-    * This looks at a single matcher & argument string, and whether a "capture" is possible.
-    * If the string represents both an argument & parameter combined  (e.g. --xxx=foo or -Xfoo).
+    * This looks at a single matcher &amp; argument string, and whether a "capture" is possible.
+    * If the string represents both an argument &amp; parameter combined  (e.g. --xxx=foo or -Xfoo).
     * But it could also be "-abc" as a way of saying, "-a -b -c", in which case we have to check
     * other Matchers as well using the charToMatcher map.
     */
@@ -885,7 +885,7 @@ public class Args {
      * A convenience function for integer conversion of raw String values.
      * Example usage:
      * <pre>
-        Matcher<Integer> matcher=args.add(Matcher::parseIntParam, "--number");
+        Matcher&lt;Integer&gt; matcher=args.add(Matcher::parseIntParam, "--number");
        </pre>
      */
     public static Integer parseIntParam(String raw) {

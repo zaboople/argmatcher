@@ -79,9 +79,11 @@
     </copy>
   </target>
 
+  <!-- Nice: Found away to only generate html warnings, which I screw up on < > & all the time -->
   <target name="javadoc" description="JavaDoc">
     <mkdir dir="javadoc"/>
-    <javadoc sourcepath="java" access="public" destdir="javadoc" packagenames="org.**,com.**">
+    <javadoc sourcepath="java" access="public" destdir="javadoc" packagenames="org.**,com.**"
+        additionalparam="-Xdoclint:html">
       <classpath refid="classpath"/>
       <fileset dir="${java.dir}">
         <include name="**/*.java"/>
@@ -104,12 +106,12 @@
   <!-- ********************* -->
 
 
-  <target name="dist" depends="dist.src,dist.bin,dist.site">
+  <target name="dist" depends="dist.bin,dist.site">
     <echo>
       Binary files in ./dist/
     </echo>
   </target>
-  <target name="dist.site" depends="dist.src,dist.bin">
+  <target name="dist.site" depends="dist.bin">
     <mkdir dir="${dist.dir}/site/"/>
     <copy todir="${dist.dir}/site/javadoc">
       <fileset dir="javadoc"/>
@@ -135,6 +137,7 @@
       <zipfileset dir="${dist.dir}/bin" prefix="${appname.version}"/>
     </zip>
   </target>
+  <!--
   <target name="dist.src" depends="clean">
     <mkdir dir ="${dist.dir}"/>
     <zip destfile="dist/${appname.version}.src.zip">
@@ -142,4 +145,5 @@
                   excludes=".git/**/*,.git"/>
     </zip>
   </target>
+  -->
 </project>
