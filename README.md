@@ -30,7 +30,7 @@ I'm too lazy to publish jar files to all the maven repos)
 [Online javadocs](https://zaboople.github.io/javadoc/argmatcher/)
 
 # Download
-[Download jar & javadocs]((https://zaboople.github.io/downloads/argmatcher-1.0.zip). The download includes a copy of the iText 5 jar file & javadocs.
+[Download jar & javadocs](https://zaboople.github.io/downloads/argmatcher-1.0.zip).
 
 # System requirements:
 
